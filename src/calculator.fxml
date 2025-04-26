@@ -13,7 +13,7 @@
             <Font name="Times New Roman Bold" size="30.0" />
          </font>
       </Button>
-      <VBox fx:id="screen" layoutY="48.0" prefHeight="100.0" prefWidth="420.0" />
+      <VBox fx:id="screen" layoutY="63.0" prefHeight="70.0" prefWidth="420.0" />
       <Text layoutX="93.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Calculator" textAlignment="CENTER" wrappingWidth="213.13671875">
          <font>
             <Font name="Times New Roman Bold" size="24.0" />
