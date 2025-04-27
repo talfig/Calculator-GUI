@@ -22,7 +22,6 @@ public class CalculatorController {
         String value = button.getText();
 
         if (startNewCalculation) {
-            // New number after '=': start new expression
             expression.setLength(0);
             startNewCalculation = false;
         }
@@ -35,6 +34,9 @@ public class CalculatorController {
     private void handleOperator(ActionEvent event) {
         Button button = (Button) event.getSource();
         String operator = button.getText();
+        if (operator.equals("-")) {
+            operator = "–"; // replace minus with en-dash for subtraction
+        }
         appendOperator(" " + operator + " ");
     }
 
@@ -47,12 +49,18 @@ public class CalculatorController {
 
         if (startIndex >= expression.length()) return;
 
-        // Check if number is already negative
-        if (expression.charAt(startIndex) == '-') {
-            // Already negative -> remove the minus
-            expression.deleteCharAt(startIndex);
+        // Find the actual start of the number (skip spaces)
+        while (startIndex < expression.length() && expression.charAt(startIndex) == ' ') {
+            startIndex++;
+        }
+        if (startIndex >= expression.length()) return;
+
+        // Check if the character before the number is a minus
+        if (expression.charAt(startIndex - 1) == '-') {
+            // If already negated, remove the minus
+            expression.deleteCharAt(startIndex - 1);
         } else {
-            // Not negative -> insert minus
+            // Insert minus sign before the number
             expression.insert(startIndex, '-');
         }
 
@@ -66,7 +74,7 @@ public class CalculatorController {
         try {
             double result = evaluateExpression(expression.toString());
             String formattedResult;
-            if (result == (long) result) { // Check if result is a whole number
+            if (result == (long) result) {
                 formattedResult = String.valueOf((long) result);
             } else {
                 formattedResult = String.valueOf(result);
@@ -74,7 +82,7 @@ public class CalculatorController {
             updateScreen(expression + " = " + formattedResult);
             expression.setLength(0);
             expression.append(formattedResult);
-            startNewCalculation = true; // Mark that user finished a calculation
+            startNewCalculation = true;
         } catch (Exception e) {
             updateScreen("Error");
             expression.setLength(0);
@@ -83,10 +91,9 @@ public class CalculatorController {
     }
 
     private double evaluateExpression(String expr) {
-        // Remove spaces if any
         expr = expr.replaceAll("\\s+", "");
+        expr = expr.replace('–', '-'); // Replace en-dash with minus for evaluation
 
-        // Split numbers and operators
         java.util.List<Double> numbers = new java.util.ArrayList<>();
         java.util.List<Character> operators = new java.util.ArrayList<>();
 
@@ -98,7 +105,7 @@ public class CalculatorController {
                 number.append(c);
             } else if ("+-*/".indexOf(c) >= 0) {
                 if (number.length() == 0 && c == '-') {
-                    number.append(c); // handle negative number
+                    number.append(c); // negative number
                 } else {
                     numbers.add(Double.parseDouble(number.toString()));
                     number.setLength(0);
@@ -111,7 +118,6 @@ public class CalculatorController {
             numbers.add(Double.parseDouble(number.toString()));
         }
 
-        // First, handle * and / (higher precedence)
         for (int i = 0; i < operators.size(); ) {
             char op = operators.get(i);
             if (op == '*' || op == '/') {
@@ -131,7 +137,6 @@ public class CalculatorController {
             }
         }
 
-        // Then handle + and -
         double result = numbers.get(0);
         for (int i = 0; i < operators.size(); i++) {
             char op = operators.get(i);
@@ -150,14 +155,13 @@ public class CalculatorController {
         if (expression.length() == 0) return;
 
         if (startNewCalculation) {
-            // Continue calculation with the result
             startNewCalculation = false;
         }
 
         char lastChar = expression.charAt(expression.length() - 1);
-        if ("+-*/".indexOf(lastChar) >= 0) {
-            // Replace last operator
-            expression.setCharAt(expression.length() - 1, op.charAt(0));
+        if ("+–*/".indexOf(lastChar) >= 0) {
+            expression.setLength(expression.length() - 1); // Remove old operator
+            expression.append(op.trim());
         } else {
             expression.append(op);
         }
@@ -167,16 +171,14 @@ public class CalculatorController {
     private int findLastOperatorIndex() {
         for (int i = expression.length() - 1; i >= 0; i--) {
             char c = expression.charAt(i);
-
-            if (c == '+' || c == '*' || c == '/') {
+            if (c == '+' || c == '*' || c == '/' || c == '–') {
                 return i;
             } else if (c == '-') {
-                // Check if this '-' is a real operator or a negative sign
-                if (i == 0 || "+-*/".indexOf(expression.charAt(i - 1)) >= 0) {
-                    // It's a negative sign, skip
+                // Check if negative sign or operator
+                if (i == 0 || "+–*/".indexOf(expression.charAt(i - 1)) >= 0) {
                     continue;
                 } else {
-                    return i; // it's a subtraction operator
+                    return i;
                 }
             }
         }
