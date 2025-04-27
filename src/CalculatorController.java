@@ -168,9 +168,16 @@ public class CalculatorController {
         for (int i = expression.length() - 1; i >= 0; i--) {
             char c = expression.charAt(i);
 
-            // Only consider +, *, / as real operators
-            if ((c == '+' || c == '*' || c == '/')) {
+            if (c == '+' || c == '*' || c == '/') {
                 return i;
+            } else if (c == '-') {
+                // Check if this '-' is a real operator or a negative sign
+                if (i == 0 || "+-*/".indexOf(expression.charAt(i - 1)) >= 0) {
+                    // It's a negative sign, skip
+                    continue;
+                } else {
+                    return i; // it's a subtraction operator
+                }
             }
         }
         return -1;
