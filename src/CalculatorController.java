@@ -4,10 +4,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 public class CalculatorController {
     @FXML
     private VBox screen;
@@ -81,18 +77,81 @@ public class CalculatorController {
         if (expression.length() == 0) return;
 
         try {
-            ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-            Object result = engine.eval(expression.toString());
-
-            updateScreen(expression + " = " + result.toString());
+            double result = evaluateExpression(expression.toString());
+            String formattedResult = (result == (long) result) ? String.valueOf((long) result) : String.valueOf(result);
+            updateScreen(expression + " = " + formattedResult);
             expression.setLength(0);
-            expression.append(result.toString());
+            expression.append(formattedResult);
             startNewCalculation = true; // Mark that user finished a calculation
-        } catch (ScriptException e) {
+        } catch (Exception e) {
             updateScreen("Error");
             expression.setLength(0);
             startNewCalculation = true;
         }
+    }
+
+    private double evaluateExpression(String expr) {
+        // Remove spaces if any
+        expr = expr.replaceAll("\\s+", "");
+
+        // Split numbers and operators
+        java.util.List<Double> numbers = new java.util.ArrayList<>();
+        java.util.List<Character> operators = new java.util.ArrayList<>();
+
+        StringBuilder number = new StringBuilder();
+
+        for (int i = 0; i < expr.length(); i++) {
+            char c = expr.charAt(i);
+            if (Character.isDigit(c) || c == '.') {
+                number.append(c);
+            } else if ("+-*/".indexOf(c) >= 0) {
+                if (number.length() == 0 && c == '-') {
+                    number.append(c); // handle negative number
+                } else {
+                    numbers.add(Double.parseDouble(number.toString()));
+                    number.setLength(0);
+                    operators.add(c);
+                }
+            }
+        }
+
+        if (number.length() > 0) {
+            numbers.add(Double.parseDouble(number.toString()));
+        }
+
+        // First, handle * and / (higher precedence)
+        for (int i = 0; i < operators.size(); ) {
+            char op = operators.get(i);
+            if (op == '*' || op == '/') {
+                double a = numbers.get(i);
+                double b = numbers.get(i + 1);
+
+                if (op == '/' && b == 0) {
+                    throw new ArithmeticException("Division by zero is not allowed!");
+                }
+
+                double res = (op == '*') ? a * b : a / b;
+                numbers.set(i, res);
+                numbers.remove(i + 1);
+                operators.remove(i);
+            } else {
+                i++;
+            }
+        }
+
+        // Then handle + and -
+        double result = numbers.get(0);
+        for (int i = 0; i < operators.size(); i++) {
+            char op = operators.get(i);
+            double b = numbers.get(i + 1);
+            if (op == '+') {
+                result += b;
+            } else {
+                result -= b;
+            }
+        }
+
+        return result;
     }
 
     private void appendOperator(String op) {
