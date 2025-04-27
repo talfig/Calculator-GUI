@@ -55,13 +55,24 @@ public class CalculatorController {
         }
         if (startIndex >= expression.length()) return;
 
-        // Check if the character before the number is a minus
-        if (expression.charAt(startIndex - 1) == '-') {
-            // If already negated, remove the minus
-            expression.deleteCharAt(startIndex - 1);
+        // If it's the first number (no operator before it)
+        if (lastOperatorIndex == -1) {
+            // If the first character is '-', remove it
+            if (expression.charAt(0) == '-') {
+                expression.deleteCharAt(0);
+            } else {
+                // Otherwise, prepend minus to the first number
+                expression.insert(0, '-');
+            }
         } else {
-            // Insert minus sign before the number
-            expression.insert(startIndex, '-');
+            // Check if the character before the number is a minus
+            if (expression.charAt(startIndex - 1) == '-') {
+                // If already negated, remove the minus
+                expression.deleteCharAt(startIndex - 1);
+            } else {
+                // Insert minus sign before the number
+                expression.insert(startIndex, '-');
+            }
         }
 
         updateScreen(expression.toString());
