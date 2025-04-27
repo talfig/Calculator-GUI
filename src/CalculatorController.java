@@ -32,23 +32,10 @@ public class CalculatorController {
     }
 
     @FXML
-    private void add(ActionEvent event) {
-        appendOperator("+");
-    }
-
-    @FXML
-    private void subtract(ActionEvent event) {
-        appendOperator("-");
-    }
-
-    @FXML
-    private void multiply(ActionEvent event) {
-        appendOperator("*");
-    }
-
-    @FXML
-    private void divide(ActionEvent event) {
-        appendOperator("/");
+    private void handleOperator(ActionEvent event) {
+        Button button = (Button) event.getSource();
+        String operator = button.getText();
+        appendOperator(" " + operator + " ");
     }
 
     @FXML
