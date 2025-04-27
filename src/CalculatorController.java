@@ -186,9 +186,7 @@ public class CalculatorController {
                 return i;
             } else if (c == '-') {
                 // Check if negative sign or operator
-                if (i == 0 || "+–*/".indexOf(expression.charAt(i - 1)) >= 0) {
-                    continue;
-                } else {
+                if (i != 0 && "+–*/".indexOf(expression.charAt(i - 1)) < 0) {
                     return i;
                 }
             }
