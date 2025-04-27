@@ -78,7 +78,12 @@ public class CalculatorController {
 
         try {
             double result = evaluateExpression(expression.toString());
-            String formattedResult = (result == (long) result) ? String.valueOf((long) result) : String.valueOf(result);
+            String formattedResult;
+            if (result == (long) result) { // Check if result is a whole number
+                formattedResult = String.valueOf((long) result);
+            } else {
+                formattedResult = String.valueOf(result);
+            }
             updateScreen(expression + " = " + formattedResult);
             expression.setLength(0);
             expression.append(formattedResult);
