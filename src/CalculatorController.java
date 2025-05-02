@@ -135,8 +135,8 @@ public class CalculatorController {
         expr = expr.replaceAll("\\s+", "");
         expr = expr.replace('–', '-'); // Replace en-dash with minus
 
-        ArrayList<Double> numbers = new ArrayList<>();
-        ArrayList<Character> operators = new ArrayList<>();
+        List<Double> numbers = new ArrayList<>();
+        List<Character> operators = new ArrayList<>();
         StringBuilder number = new StringBuilder();
 
         for (int i = 0; i < expr.length(); i++) {
