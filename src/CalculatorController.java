@@ -4,6 +4,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import java.util.*;
+
 /**
  * Controller class for a basic calculator implemented with JavaFX.
  * Handles number input, operator input, negation, evaluation of expressions, and UI updates.
@@ -133,8 +135,8 @@ public class CalculatorController {
         expr = expr.replaceAll("\\s+", "");
         expr = expr.replace('–', '-'); // Replace en-dash with minus
 
-        java.util.List<Double> numbers = new java.util.ArrayList<>();
-        java.util.List<Character> operators = new java.util.ArrayList<>();
+        ArrayList<Double> numbers = new ArrayList<>();
+        ArrayList<Character> operators = new ArrayList<>();
         StringBuilder number = new StringBuilder();
 
         for (int i = 0; i < expr.length(); i++) {
