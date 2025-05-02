@@ -11,15 +11,11 @@ import java.util.*;
  * Handles number input, operator input, negation, evaluation of expressions, and UI updates.
  */
 public class CalculatorController {
-
     @FXML
     private VBox screen;
 
-    /** Holds the current expression entered by the user. */
-    private final StringBuilder expression = new StringBuilder();
-
-    /** Indicates whether a new calculation should begin (set after pressing "="). */
-    private boolean startNewCalculation = false;
+    private final StringBuilder expression = new StringBuilder(); // Holds the current expression entered by the user
+    private boolean startNewCalculation = false; // Indicates whether a new calculation should begin (set after pressing "=")
 
     /**
      * Initializes the controller after the FXML has been loaded.
